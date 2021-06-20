@@ -34,19 +34,34 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: id, for: indexPath)
-		cell.backgroundColor = .green
-		cell.autoresizingMask = .init(arrayLiteral: .flexibleHeight, .flexibleWidth)
+		
+		
+		let url = URL(string: Images.images[indexPath.row])
+	
+		if let data = NSData(contentsOf: url!) {
+			let image = UIImage(data: data as Data)
+			let imageView = UIImageView(image: image)
+			imageView.contentMode = UIImageView.ContentMode.scaleAspectFit
+		
+			cell.backgroundView = imageView
+		} else {
+			print("ERR")
+		}
+		
+		cell.backgroundColor = .black
 		return cell
 		
 	}
 	
-//	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//		let size = self.view.bounds.width / 2 - 10
-//		return CGSize(width: size, height: size)
-//	}
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		let size = self.view.bounds.width / 2 - 10
+		return CGSize(width: size, height: size)
+	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+		
+		
 		return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
 	}
-
+	
 }
