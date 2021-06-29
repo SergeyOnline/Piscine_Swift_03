@@ -22,15 +22,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		// Create the SwiftUI view that provides the window contents.
 		
 		let vc = ViewController()
-		let nc = UINavigationController(rootViewController: vc)
-		nc.navigationItem.title = "Images"
+		let navController = UINavigationController(rootViewController: vc)
+		navController.navigationBar.tintColor = .black
+		
 		
 //		vc.view.backgroundColor = .systemGray3
 
 		// Use a UIHostingController as window root view controller.
 		if let windowScene = scene as? UIWindowScene {
 		    let window = UIWindow(windowScene: windowScene)
-		    window.rootViewController = nc
+		    window.rootViewController = navController
 		    self.window = window
 		    window.makeKeyAndVisible()
 		}

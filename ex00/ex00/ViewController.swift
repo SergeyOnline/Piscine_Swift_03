@@ -8,15 +8,24 @@
 
 import UIKit
 
+let CannotAccesToImageNotification = "CannotAccesToImageNotification"
+
 class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 	
 	var collectionView: UICollectionView!
 	let id = "Cell"
-
+	var imageErrorText = ""
+		
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		self.navigationItem.title = "Images"
 
 		let flowLayout = UICollectionViewFlowLayout()
+		
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(failLoadImage), name: NSNotification.Name(rawValue: CannotAccesToImageNotification), object: nil)
+		
 		
 		let frame = self.view.bounds
 		collectionView = UICollectionView(frame: frame, collectionViewLayout: flowLayout)
@@ -24,14 +33,43 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
 		collectionView.delegate = self
 		collectionView.dataSource = self
 		collectionView.backgroundColor = .systemGray4
-
 		collectionView.autoresizingMask = .flexibleWidth
 		
 		self.view.addSubview(collectionView)
+		
     }
+	
+	override func viewDidDisappear(_ animated: Bool) {
+		NotificationCenter.default.removeObserver(self)
+		
+//		NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: CannotAccesToImageNotification), object: nil)
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		if !imageErrorText.isEmpty {
+			let alert = UIAlertController(title: "Error", message: "Cannot acces to \(imageErrorText)", preferredStyle: .alert)
+			
+			let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+			alert.addAction(alertAction)
+			self.present(alert, animated: true) {
+				
+			}
+		}
+	}
+	
+	@objc func failLoadImage(nc: Notification) {
+		imageErrorText = nc.userInfo!["URL"] as! String
+	}
     
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		4
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+		let imageView = collectionView.cellForItem(at: indexPath)!.backgroundView!
+		let scrollViewController = ScrollViewController(image: imageView.largeContentImage!)
+		self.navigationController?.pushViewController(scrollViewController, animated: false)
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -74,14 +112,15 @@ extension UIImageView {
 		activitiIndicator.startAnimating()
 		activitiIndicator.color = .cyan
 		activitiIndicator.center = self.center
-
+		
 		self.addSubview(activitiIndicator)
 		
 		activitiIndicator.startAnimating()
 		
 		URLSession.shared.dataTask(with: URL(string: urlString)!) { (data, response, error) in
 			if error != nil {
-				print(error ?? "Error")
+				//				print(error ?? "Error")
+				NotificationCenter.default.post(name: NSNotification.Name(rawValue: CannotAccesToImageNotification), object: nil, userInfo: ["URL":urlString])
 				return
 			}
 			
