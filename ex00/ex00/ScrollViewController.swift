@@ -23,6 +23,8 @@ class ScrollViewController: UIViewController, UIScrollViewDelegate {
 		
 		scrollView = UIScrollView(frame: self.view.frame)
 		scrollView.delegate = self
+		scrollView.translatesAutoresizingMaskIntoConstraints = false
+		
 	
 		scrollView.contentSize = image.size
 		scrollView.minimumZoomScale = 1.0
@@ -33,6 +35,10 @@ class ScrollViewController: UIViewController, UIScrollViewDelegate {
 		scrollView.addSubview(imageView)
 		
 		self.view.addSubview(scrollView)
+		scrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+		scrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+		scrollView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+		scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
     }
 	
 	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
